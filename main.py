@@ -4,6 +4,7 @@ from fastapi.responses import PlainTextResponse
 import os, datetime
 from utils import send_discord, send_telegram
 from openai import OpenAI
+import asyncio
 
 app = FastAPI()
 
@@ -11,12 +12,24 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 DEFAULT_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
 async def ask_openai(prompt: str) -> str:
-    """Usa la API nueva /responses (compatible con claves sk-proj-...)."""
-    resp = client.responses.create(
-        model=DEFAULT_MODEL,
-        input=prompt
-    )
-    return resp.output_text.strip()
+    """
+    Llama a la API nueva /responses (clave sk-proj-…).
+    Incluye reintentos simples por si hay 429 o fallos transitorios.
+    """
+    last_err = None
+    for attempt in range(3):
+        try:
+            resp = client.responses.create(
+                model=DEFAULT_MODEL,
+                input=prompt
+            )
+            return resp.output_text.strip()
+        except Exception as e:
+            last_err = e
+            # backoff: 1.5s, 3s, 4.5s
+            await asyncio.sleep(1.5 * (attempt + 1))
+    return f"⚠️ No pude obtener respuesta de OpenAI tras reintentos: {last_err}"
+#End
 
 WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET", "").strip()
 
