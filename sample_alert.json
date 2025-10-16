@@ -1,0 +1,14 @@
+
+{
+  "secret": "mi_clave_ultra_segura",
+  "ticker": "BINANCE:BTCUSDT",
+  "symbol": "BTCUSDT",
+  "interval": "15",
+  "time": "2025-10-16T14:33:00Z",
+  "price": 9976.1,
+  "open": 9900.0,
+  "high": 10010.3,
+  "low": 9888.2,
+  "volume": 134.55,
+  "note": "buy"
+}

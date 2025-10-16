@@ -1,0 +1,23 @@
+
+services:
+  - type: web
+    name: tv-chatgpt-agent
+    env: docker
+    plan: free
+    autoDeploy: true
+    healthCheckPath: /health
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: WEBHOOK_SECRET
+        sync: false
+      - key: DISCORD_WEBHOOK
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHAT_ID
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-5-thinking
+      - key: RESPONSE_STYLE
+        value: Analiza en 1-2 líneas: dirección, S/R cercanos, riesgo y sesgo temporal. No des consejo de inversión.
