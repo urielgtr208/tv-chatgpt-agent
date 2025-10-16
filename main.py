@@ -2,9 +2,21 @@
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import PlainTextResponse
 import os, datetime
-from utils import ask_openai, send_discord, send_telegram
+from utils import send_discord, send_telegram
+from openai import OpenAI
 
 app = FastAPI()
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+DEFAULT_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+
+async def ask_openai(prompt: str) -> str:
+    """Usa la API nueva /responses (compatible con claves sk-proj-...)."""
+    resp = client.responses.create(
+        model=DEFAULT_MODEL,
+        input=prompt
+    )
+    return resp.output_text.strip()
 
 WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET", "").strip()
 
